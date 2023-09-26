@@ -2,7 +2,7 @@ import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import { APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda";
 
 const dynamodb = new DynamoDB({});
-const table = 'token'
+const table = 'token';
 
 function validate(token_name: string, token_description: string, token_status: string, attributes: string): string {
   let message = '';
