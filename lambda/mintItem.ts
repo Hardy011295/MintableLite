@@ -1,18 +1,18 @@
 import { DynamoDB } from "@aws-sdk/client-dynamodb"; 
-import { APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda";
+import { APIGatewayProxyResult } from "aws-lambda";
 
 const dynamodb = new DynamoDB({});
 const table = 'token';
 
 function validate(token_name: string, token_description: string, token_status: string, attributes: string): string {
   let message = '';
-  if (token_name === '') {
+  if (!token_name) {
     message = 'Missing token_name';
-  } else if (token_description === '') {
+  } else if (!token_description) {
     message = 'Missing token_description';
-  } else if (token_status === '') {
+  } else if (!token_status) {
     message = 'Missing token_status';
-  } else if (attributes === '') {
+  } else if (!attributes) {
     message = 'Missing attributes';
   } else {
     return '';
@@ -20,7 +20,7 @@ function validate(token_name: string, token_description: string, token_status: s
   return message;
 }
 
-export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (event: any): Promise<APIGatewayProxyResult> => {
   try {
     const { token_name, token_description, token_status, attributes } = JSON.parse(event.body);
     const err = validate(token_name, token_description, token_status, attributes)
