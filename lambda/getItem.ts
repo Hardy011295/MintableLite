@@ -4,7 +4,7 @@ import { APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda";
 const dynamodb = new DynamoDB({});
 const table = 'token';
 
-export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (event: any): Promise<APIGatewayProxyResult> => {
   try {
     const { filterParams } = JSON.parse(event.body);
     const tokenName = filterParams.token_name;
@@ -25,16 +25,21 @@ export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyRe
 
     const data = await dynamodb.query(params);
 
-    if (data.Items.length === 0) {
+    if (data.Items) {
+      if (data.Items.length === 0) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: "Item not found" }),
+        };
+      }
       return {
-        statusCode: 404,
-        body: JSON.stringify({ error: "Item not found" }),
+        statusCode: 200,
+        body: JSON.stringify(data.Items[0]),
       };
     }
-
     return {
-      statusCode: 200,
-      body: JSON.stringify(data.Items[0]),
+      statusCode: 404,
+      body: JSON.stringify({ error: "Item not found" }),
     };
   } catch (error) {
     console.error(error);
